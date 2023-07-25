@@ -22,17 +22,17 @@ public class FuncionarioController {
 
     @PostMapping
     @Transactional
-    public void cadastrar(@RequestBody @Valid DadosCadastroFuncionario dadosCadastroFuncionario){
+    public void cadastrar(@RequestBody @Valid DadosCadastroFuncionario dadosCadastroFuncionario) throws Exception {
         funcionarioServico.cadastrar(dadosCadastroFuncionario);
     }
 
     @GetMapping
-    public Page<DadosRespostaFuncionario> listagem(@PageableDefault(size = 10, sort = {"nome"}) Pageable pageable) {
+    public Page<DadosRespostaFuncionario> listagem(@PageableDefault(size = 10, sort = {"nome"}) Pageable pageable) throws Exception {
         return funcionarioServico.listar(pageable);
     }
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public void deletar(@PathVariable Long id) throws NaoEncontradoException,Exception {
         funcionarioServico.deletar(id);
     }
 

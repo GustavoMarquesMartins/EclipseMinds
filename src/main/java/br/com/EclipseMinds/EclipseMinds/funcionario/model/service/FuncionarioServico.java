@@ -1,5 +1,6 @@
 package br.com.EclipseMinds.EclipseMinds.funcionario.model.service;
 
+import br.com.EclipseMinds.EclipseMinds.exception.BaseDadosException;
 import br.com.EclipseMinds.EclipseMinds.exception.NaoEncontradoException;
 import br.com.EclipseMinds.EclipseMinds.funcionario.model.DTO.DadosAtualizarFuncionario;
 import br.com.EclipseMinds.EclipseMinds.funcionario.model.DTO.DadosCadastroFuncionario;
@@ -24,17 +25,20 @@ public class FuncionarioServico {
     @Autowired
     ModelMapper modelMapper;
 
-    public void cadastrar(DadosCadastroFuncionario dadosCadastroFuncionario) {
+    public void cadastrar(DadosCadastroFuncionario dadosCadastroFuncionario) throws Exception {
         funcionarioRepository.save(modelMapper.map(dadosCadastroFuncionario, Funcionario.class));
     }
 
-    public Page<DadosRespostaFuncionario> listar(Pageable pageable) {
+    public Page<DadosRespostaFuncionario> listar(Pageable pageable) throws Exception {
         return funcionarioRepository.findAll(pageable).map(DadosRespostaFuncionario::new);
     }
 
     @Transactional
-    public void deletar(Long id) {
-        var funcionario = funcionarioRepository.getReferenceById(id);
+    public void deletar(Long id) throws NaoEncontradoException, Exception {
+        var funcionario = validarFuncionarioExistente(id);
+        if (funcionario.getStatus() == false) {
+            throw new Exception("Usuario já está inativo");
+        }
         funcionario.statusInativo();
     }
 
@@ -48,4 +52,6 @@ public class FuncionarioServico {
     public Funcionario validarFuncionarioExistente(Long id) throws NaoEncontradoException {
         return funcionarioRepository.findById(id).orElseThrow(() -> new NaoEncontradoException("Funcionario não encontrado"));
     }
+
+
 }

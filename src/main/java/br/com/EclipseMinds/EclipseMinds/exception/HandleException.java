@@ -17,4 +17,11 @@ public class HandleException extends ResponseEntityExceptionHandler {
                 .status(naoEncontradoException.getStatus())
                 .build();
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(Exception.class)
+    public ResponseException handleException(Exception exception) {
+        return ResponseException.builder()
+                .mensagem(exception.getMessage())
+                .build();
+    }
 }
